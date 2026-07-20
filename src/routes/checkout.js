@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
 
     const charge = await createCharge({
       amount: amountCents,
-      customer: { name: customer.name, email: customer.email },
+      customer: { name: customer.name, email: customer.email, document: customer.document },
       externalOrderId: String(draft.id),
       sourceUrl: sourceUrl || `https://${process.env.SHOPIFY_STORE}`,
       metadata: { shopify_draft_order_id: String(draft.id) },
