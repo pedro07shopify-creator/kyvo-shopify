@@ -20,14 +20,14 @@ async function shopifyRequest(method, path, body) {
 }
 
 export async function createDraftOrder({ lineItems, customer, note }) {
-  const data = await shopifyRequest("POST", "/draft_orders.json", {
-    draft_order: {
-      line_items: lineItems,
-      customer,
-      note,
-      use_customer_default_address: true,
-    },
-  });
+  const body = {
+    line_items: lineItems,
+    note,
+    use_customer_default_address: false,
+  };
+  if (customer) body.customer = customer;
+
+  const data = await shopifyRequest("POST", "/draft_orders.json", { draft_order: body });
   return data.draft_order;
 }
 
