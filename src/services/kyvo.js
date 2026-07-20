@@ -23,9 +23,11 @@ export async function createCharge({ amount, customer, externalOrderId, sourceUr
 }
 
 export async function getTransaction(id) {
-  const res = await fetch(`${BASE}/transactions/${id}`, {
+  const res = await fetch(`${BASE}/spei/charges/${id}`, {
     headers: { Authorization: `Bearer ${process.env.KYVO_API_KEY}` },
   });
+  const body = await res.json().catch(() => ({}));
+  console.log("[kyvo] getTransaction response:", JSON.stringify(body));
   if (!res.ok) throw new Error(`Kyvo getTransaction → ${res.status}`);
-  return res.json();
+  return body;
 }
