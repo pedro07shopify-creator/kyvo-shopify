@@ -27,14 +27,14 @@ router.get("/:chargeId", async (req, res) => {
     const expires = expiresRaw ? new Date(expiresRaw).toLocaleString("es-MX", { timeZone: "America/Mexico_City" }) : "—";
 
     const html = template
-      .replace("{{CLABE}}", clabe)
-      .replace("{{BANCO}}", bank)
-      .replace("{{BENEFICIARIO}}", beneficiary)
-      .replace("{{REFERENCIA}}", reference)
-      .replace("{{VALOR}}", amount)
-      .replace("{{EXPIRA}}", expires)
-      .replace("{{STATUS}}", tx.status || "pending")
-      .replace("{{CHARGE_ID}}", tx.id || req.params.chargeId);
+      .replaceAll("{{CLABE}}",       clabe)
+      .replaceAll("{{BANCO}}",       bank)
+      .replaceAll("{{BENEFICIARIO}}", beneficiary)
+      .replaceAll("{{REFERENCIA}}",  reference)
+      .replaceAll("{{VALOR}}",       amount)
+      .replaceAll("{{EXPIRA}}",      expires)
+      .replaceAll("{{STATUS}}",      tx.status || "pending")
+      .replaceAll("{{CHARGE_ID}}",   tx.id || req.params.chargeId);
 
     res.send(html);
   } catch (err) {

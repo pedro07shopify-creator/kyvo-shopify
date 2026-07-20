@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instruções de Pagamento SPEI</title>
+  <title>Instrucciones de Pago SPEI</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 16px; }
@@ -30,16 +30,16 @@
 </head>
 <body>
   <div class="card">
-    <h1>Pague via transferência SPEI</h1>
-    <p class="subtitle">Use o app do seu banco para transferir o valor exato abaixo.</p>
+    <h1>Paga por transferencia SPEI</h1>
+    <p class="subtitle">Usa la app de tu banco para transferir el monto exacto.</p>
 
     <div class="field">
-      <div class="label">Status</div>
+      <div class="label">Estado</div>
       <span class="status-badge status-{{STATUS}}">{{STATUS}}</span>
     </div>
 
     <div class="field">
-      <div class="label">Valor a pagar</div>
+      <div class="label">Monto a pagar</div>
       <div class="value amount">{{VALOR}}</div>
     </div>
 
@@ -56,58 +56,56 @@
     </div>
 
     <div class="field">
-      <div class="label">Beneficiário</div>
+      <div class="label">Beneficiario</div>
       <div class="value">{{BENEFICIARIO}}</div>
     </div>
 
     <div class="field">
-      <div class="label">Referência</div>
+      <div class="label">Referencia</div>
       <div class="value">{{REFERENCIA}}</div>
     </div>
 
-    <p class="expires">⏰ Expira em: {{EXPIRA}} (horário do México)</p>
+    <p class="expires">⏰ Vence: {{EXPIRA}} (hora de México)</p>
 
     <div class="steps">
-      <h3>Como pagar:</h3>
+      <h3>¿Cómo pagar?</h3>
       <ol>
-        <li>Abra o app do seu banco</li>
-        <li>Selecione "Transferência SPEI" ou "Pagar a terceiros"</li>
-        <li>Insira a CLABE acima</li>
-        <li>Digite o valor <strong>{{VALOR}}</strong> exato</li>
-        <li>Confirme — a aprovação é automática em segundos</li>
+        <li>Abre la app de tu banco</li>
+        <li>Selecciona "Transferencia SPEI" o "Pagar a terceros"</li>
+        <li>Ingresa la CLABE</li>
+        <li>Escribe el monto <strong>{{VALOR}}</strong> exacto</li>
+        <li>Confirma — la aprobación es automática en segundos</li>
       </ol>
     </div>
 
-    <p id="status-msg">Verificando pagamento automaticamente...</p>
+    <p id="status-msg">Verificando pago automáticamente...</p>
   </div>
 
   <script>
     function copy(text) {
-      navigator.clipboard.writeText(text).then(() => alert('CLABE copiada!'));
+      navigator.clipboard.writeText(text).then(() => alert('¡CLABE copiada!'));
     }
 
-    // Polling: verifica se pagamento foi confirmado a cada 8s
     const chargeId = "{{CHARGE_ID}}";
     let attempts = 0;
 
     async function checkStatus() {
-      if (attempts++ > 45) return; // para após ~6 min
+      if (attempts++ > 45) return;
       try {
-        const r = await fetch(`/status/${chargeId}`);
+        const r = await fetch('/status/' + chargeId);
         const d = await r.json();
-        if (d.status === "paid") {
-          document.getElementById("status-msg").innerHTML =
-            '<strong style="color:#16a34a">✓ Pagamento confirmado! Seu pedido foi gerado.</strong>';
-          // Atualiza badge
-          const badge = document.querySelector(".status-badge");
-          badge.textContent = "paid";
-          badge.className = "status-badge status-paid";
+        if (d.status === 'paid') {
+          document.getElementById('status-msg').innerHTML =
+            '<strong style="color:#16a34a">✓ ¡Pago confirmado! Tu pedido fue generado.</strong>';
+          const badge = document.querySelector('.status-badge');
+          badge.textContent = 'paid';
+          badge.className = 'status-badge status-paid';
         }
       } catch {}
       setTimeout(checkStatus, 8000);
     }
 
-    if ("{{STATUS}}" !== "paid") setTimeout(checkStatus, 8000);
+    if ('{{STATUS}}' !== 'paid') setTimeout(checkStatus, 8000);
   </script>
 </body>
 </html>
