@@ -5,12 +5,21 @@ import { createCharge } from "../services/kyvo.js";
 const router = Router();
 
 // POST /checkout
-// Body: { lineItems, customer: { name, email }, sourceUrl }
+// Aceita payload do snippet Shopify: { line_items, customer_email, source_url, utm }
+// ou payload direto:              { lineItems, customer: { name, email }, sourceUrl }
 router.post("/", async (req, res) => {
-  const { lineItems, customer, sourceUrl } = req.body;
+  const body = req.body;
 
-  if (!lineItems?.length || !customer?.name || !customer?.email) {
-    return res.status(400).json({ error: "lineItems, customer.name e customer.email são obrigatórios" });
+  const lineItems = body.lineItems || body.line_items;
+  const sourceUrl = body.sourceUrl || body.source_url;
+
+  const customerEmail = body.customer?.email || body.customer_email || "";
+  const customerName  = body.customer?.name  || body.customer_name  || customerEmail.split("@")[0] || "Cliente";
+
+  const customer = { name: customerName, email: customerEmail };
+
+  if (!lineItems?.length) {
+    return res.status(400).json({ error: "line_items é obrigatório" });
   }
 
   try {
