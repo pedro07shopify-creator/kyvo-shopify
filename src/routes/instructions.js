@@ -12,6 +12,10 @@ const template = readFileSync(join(__dir, "../views/instructions.html"), "utf8")
 router.get("/:chargeId", async (req, res) => {
   try {
     const tx = await getTransaction(req.params.chargeId);
+
+    // DEBUG: mostra estrutura completa enquanto mapeamos os campos corretos
+    return res.send("<pre>" + JSON.stringify(tx, null, 2) + "</pre>");
+
     const spei = tx.instructions?.spei;
 
     if (!spei) return res.status(404).send("Cobrança não encontrada.");

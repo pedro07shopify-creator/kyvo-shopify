@@ -23,7 +23,7 @@ export async function createCharge({ amount, customer, externalOrderId, sourceUr
 }
 
 export async function getTransaction(id) {
-  const url = `${BASE}/spei/charges/${id}`;
+  const url = `${BASE}/transactions/${id}`;
   console.log("[kyvo] getTransaction URL:", url);
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${process.env.KYVO_API_KEY}` },
