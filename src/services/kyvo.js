@@ -10,7 +10,7 @@ export async function createCharge({ amount, customer, externalOrderId, sourceUr
       "Idempotency-Key": externalOrderId,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ amount, customer, externalOrderId, sourceUrl, metadata }),
+    body: JSON.stringify({ amount, customer: { name: customer.name, email: customer.email, document: customer.document }, externalOrderId, sourceUrl, metadata }),
   });
 
   if (!res.ok) {

@@ -13,10 +13,11 @@ router.post("/", async (req, res) => {
   const lineItems = body.lineItems || body.line_items;
   const sourceUrl = body.sourceUrl || body.source_url;
 
-  const customerEmail = body.customer?.email || body.customer_email || "";
-  const customerName  = body.customer?.name  || body.customer_name  || customerEmail.split("@")[0] || "Cliente";
+  const customerEmail    = body.customer?.email    || body.customer_email    || "";
+  const customerName     = body.customer?.name     || body.customer_name     || customerEmail.split("@")[0] || "Cliente";
+  const customerDocument = body.customer?.document || body.customer_document || "";
 
-  const customer = { name: customerName, email: customerEmail };
+  const customer = { name: customerName, email: customerEmail, document: customerDocument };
 
   if (!lineItems?.length) {
     return res.status(400).json({ error: "line_items é obrigatório" });
