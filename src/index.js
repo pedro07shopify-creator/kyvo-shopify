@@ -15,17 +15,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Salva rawBody para validação de assinatura do webhook
-app.use((req, res, next) => {
-  let data = "";
-  req.on("data", (chunk) => (data += chunk));
-  req.on("end", () => {
-    req.rawBody = data;
-    next();
-  });
-});
-
-app.use(express.json());
+// rawBody capturado via verify do express.json (não consome o stream antes do parser)
+app.use(express.json({
+  verify: (req, _res, buf) => { req.rawBody = buf.toString(); }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // Rotas
