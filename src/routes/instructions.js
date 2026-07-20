@@ -33,7 +33,7 @@ router.get("/:chargeId", async (req, res) => {
     res.send(html);
   } catch (err) {
     console.error("[instructions]", err.message);
-    res.status(500).send("Erro ao carregar instruções de pagamento.");
+    res.status(500).send("Erro: " + err.message);
   }
 });
 
