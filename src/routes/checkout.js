@@ -57,8 +57,18 @@ router.post("/", async (req, res) => {
       metadata: { shopify_draft_order_id: String(draft.id) },
     });
 
-    // 3. Redireciona para página de instruções
-    const instructionsUrl = `${process.env.APP_URL}/instructions/${charge.id}?draft=${draft.id}`;
+    // 3. Monta URL de instruções com todos os dados SPEI disponíveis
+    const spei = charge.speiInstructions || charge.instructions?.spei || charge.spei || {};
+    const params = new URLSearchParams({
+      draft: draft.id,
+      amount: amountCents,
+      clabe:  spei.clabe        || charge.clabe        || "",
+      bank:   spei.bank         || charge.bank          || "",
+      ref:    spei.reference    || charge.reference     || charge.id,
+      bene:   spei.beneficiary  || charge.beneficiary   || "",
+      exp:    spei.expires_at   || charge.expiresAt     || "",
+    });
+    const instructionsUrl = `${process.env.APP_URL}/instructions/${charge.id}?${params}`;
     res.json({ redirect: instructionsUrl, chargeId: charge.id, draftOrderId: draft.id });
   } catch (err) {
     console.error("[checkout]", err.message);

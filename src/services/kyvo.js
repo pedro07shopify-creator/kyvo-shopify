@@ -15,11 +15,12 @@ export async function createCharge({ amount, customer, externalOrderId, sourceUr
 
   if (!res.ok) {
     const errBody = await res.text().catch(() => "");
-    console.error("[kyvo] createCharge payload:", JSON.stringify({ amount, customer, externalOrderId, sourceUrl, metadata }));
-    console.error("[kyvo] createCharge error response:", errBody);
+    console.error("[kyvo] createCharge error:", errBody);
     throw new Error(`Kyvo createCharge → ${res.status}: ${errBody}`);
   }
-  return res.json();
+  const data = await res.json();
+  console.log("[kyvo] createCharge response:", JSON.stringify(data));
+  return data;
 }
 
 export async function getTransaction(id) {

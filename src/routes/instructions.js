@@ -11,28 +11,30 @@ const template = readFileSync(join(__dir, "../views/instructions.html"), "utf8")
 // GET /instructions/:chargeId
 router.get("/:chargeId", async (req, res) => {
   try {
+    const q = req.query;
     const tx = await getTransaction(req.params.chargeId);
 
-    // DEBUG: mostra estrutura completa enquanto mapeamos os campos corretos
-    return res.send("<pre>" + JSON.stringify(tx, null, 2) + "</pre>");
+    const spei = tx.instructions?.spei || tx.speiInstructions || tx.spei || {};
 
-    const spei = tx.instructions?.spei;
+    const clabe       = spei.clabe       || q.clabe || "";
+    const bank        = spei.bank        || q.bank  || "";
+    const beneficiary = spei.beneficiary || q.bene  || "";
+    const reference   = spei.reference   || q.ref   || req.params.chargeId;
+    const expiresRaw  = spei.expires_at  || q.exp   || "";
+    const amountCents = tx.amount        || parseInt(q.amount) || 0;
 
-    if (!spei) return res.status(404).send("Cobrança não encontrada.");
-
-    const amount = (tx.amount / 100).toLocaleString("es-MX", { style: "currency", currency: "MXN" });
-    const expires = new Date(spei.expires_at).toLocaleString("pt-BR", { timeZone: "America/Mexico_City" });
-    const status = tx.status;
+    const amount  = (amountCents / 100).toLocaleString("es-MX", { style: "currency", currency: "MXN" });
+    const expires = expiresRaw ? new Date(expiresRaw).toLocaleString("es-MX", { timeZone: "America/Mexico_City" }) : "—";
 
     const html = template
-      .replace("{{CLABE}}", spei.clabe)
-      .replace("{{BANCO}}", spei.bank)
-      .replace("{{BENEFICIARIO}}", spei.beneficiary)
-      .replace("{{REFERENCIA}}", spei.reference)
+      .replace("{{CLABE}}", clabe)
+      .replace("{{BANCO}}", bank)
+      .replace("{{BENEFICIARIO}}", beneficiary)
+      .replace("{{REFERENCIA}}", reference)
       .replace("{{VALOR}}", amount)
       .replace("{{EXPIRA}}", expires)
-      .replace("{{STATUS}}", status)
-      .replace("{{CHARGE_ID}}", tx.id);
+      .replace("{{STATUS}}", tx.status || "pending")
+      .replace("{{CHARGE_ID}}", tx.id || req.params.chargeId);
 
     res.send(html);
   } catch (err) {
